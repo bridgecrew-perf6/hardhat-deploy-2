@@ -3,3 +3,7 @@
 npm install
 npx hardhat compile
 npx hardhat deploy --rinkeby
+
+
+# Deploy Smart contract
+npx hardhat deploy --network rinkeby 

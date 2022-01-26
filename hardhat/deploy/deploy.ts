@@ -20,8 +20,8 @@ const deployOptions: DeployFunction = async (hre) => {
 
 
   const wethDeploy = await deploy({
-    contract: 'dBank',
-    args: ['0x734F763eEF50CB868F4371395Fe4eBc9B6b13543'],
+    contract: 'CosmicCaps',
+    args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
     skipIfAlreadyDeployed: false,
     hre,
 })
