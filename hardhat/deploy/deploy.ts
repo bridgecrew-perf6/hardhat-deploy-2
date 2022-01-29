@@ -18,20 +18,22 @@ const deployOptions: DeployFunction = async (hre) => {
   log('********** Deploying **********', { indent: 1 })
   log('')
 
-
-  const wethDeploy = await deploy({
-    contract: 'CosmicCaps',
-    args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
-    skipIfAlreadyDeployed: false,
-    hre,
-})
-
+//
 //   const wethDeploy = await deploy({
-//     contract: 'Token',
-//     args:[],
+//     contract: 'BlockMint',
+//     // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
 //     skipIfAlreadyDeployed: false,
 //     hre,
-//   })
+// })
+
+const wethDeploy = await deploy({
+  contract: 'BlockStaking',
+  // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+  skipIfAlreadyDeployed: false,
+  hre,
+})
+
+
 }
 
 deployOptions.tags = []

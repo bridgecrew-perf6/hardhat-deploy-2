@@ -13,14 +13,14 @@ import "./ERC721Stakable.sol";
 
 
 /**
-__________.__                 __   ___________                             
-\______   \  |   ____   ____ |  | _\_   _____/______  ____   ____   ____   
- |    |  _/  |  /  _ \_/ ___\|  |/ /|    __) \_  __ \/  _ \ / ___\_/ __ \  
- |    |   \  |_(  <_> )  \___|    < |     \   |  | \(  <_> ) /_/  >  ___/  
- |______  /____/\____/ \___  >__|_ \\___  /   |__|   \____/\___  / \___  > 
-        \/                 \/     \/    \/                /_____/      \/ 
+__________.__                 __   ___________
+\______   \  |   ____   ____ |  | _\_   _____/______  ____   ____   ____
+ |    |  _/  |  /  _ \_/ ___\|  |/ /|    __) \_  __ \/  _ \ / ___\_/ __ \
+ |    |   \  |_(  <_> )  \___|    < |     \   |  | \(  <_> ) /_/  >  ___/
+ |______  /____/\____/ \___  >__|_ \\___  /   |__|   \____/\___  / \___  >
+        \/                 \/     \/    \/                /_____/      \/
 
-			
+
 ╭━━━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╭━━━╮
 ┃╭━╮┃╱╱╱╱╱╱╱╱╱╱╱╱╱┃╭━╮┃
 ┃┃╱╰╋━━┳━━┳╮╭┳┳━━╮┃┃╱╰╋━━┳━━┳━━╮
@@ -37,40 +37,41 @@ Cosmic Caps are fungi from far out in the shroomiverse, and they want to chill w
 
 */
 
-contract CosmicCaps is ERC721Stakable, ReentrancyGuardUpgradeable {
+contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 
 	uint256 internal constant Max_Supply = 10000;
 	uint256 internal constant Reeserve_Supply = 300;
 	uint256 internal constant Public_Supply = Max_Supply - Reeserve_Supply;
 	uint256 internal constant price = 0.02 ether;
-	uint256 internal constant Max_mint_per_transaction = 10; 
-	uint256 internal constant Whitelist_Max_mint_per_wallet = 2;
+	uint256 internal constant Max_Mint_Amount = 10;
+	uint256 internal constant Max_mint_per_transaction = 10;
+	/* uint256 internal constant Whitelist_Max_mint_per_wallet = 2; */
 
 	 string internal _baseTokenURI;
 	 bool internal URISet = false;
 
-	bytes32 public WhitelistMerkleRoot;
-	string public WhitelistURI;
+	/* bytes32 public WhitelistMerkleRoot;
+	string public WhitelistURI; */
 
-	bool public whitelistMintOpen;
+	/* bool public whitelistMintOpen; */
 	bool public publicMintOpen;
 
 	uint256 public totalSupply;
 
 	uint256 internal _reserveMinted;
 
-	mapping(address => uint256) public whitelistMintedCounts;
+	/* mapping(address => uint256) public whitelistMintedCounts; */
 	mapping(address => uint256) public publicMintedCounts;
 
-	event WhitelistMintOpen();
+	/* event WhitelistMintOpen(); */
 	event PublicMintOpen();
 
  /*
   WRITE FUNCTIONS
   */
 
- // Function to initialize token, metadata and staking address 
-	function initalize(address _stakingAddress, string memory baseTokenURI) public  initializer { 
+ // Function to initialize token, metadata and staking address
+	function initalize(address _stakingAddress, string memory baseTokenURI) public  initializer {
 		__ERC721Stakable_init("BlockForge","BLKF"); // Initialize Token Name and Symbol
 		__ReentrancyGuard_init_unchained();
 
@@ -78,7 +79,7 @@ contract CosmicCaps is ERC721Stakable, ReentrancyGuardUpgradeable {
 		_baseTokenURI = baseTokenURI;
 	}
 
- // Function to view baseURI 
+ // Function to view baseURI
 
  	function _baseURI() internal view virtual override returns(string memory){
  		return _baseTokenURI;
@@ -86,16 +87,16 @@ contract CosmicCaps is ERC721Stakable, ReentrancyGuardUpgradeable {
 
  // Function to mint, can be called externally but cannot be called by a contract address
 	function mint(uint256 amount, bool stake) external noContract{
-		uint256 newMintedAmount = publicMintedCounts[msg.sender] + amount; 
+		uint256 newMintedAmount = publicMintedCounts[msg.sender] + amount;
 		require(totalSupply + amount <= Public_Supply, "Token Limit Reached"); //Ensure there is supply before minting
-		require(newMintedAmount <= 1, "Public Mint Limit Reached");
+		/* require(newMintedAmount <= Max_Mint_Amount, "Public Mint Limit Reached"); */
 		publicMintedCounts[msg.sender] = newMintedAmount;
 		_mintHelper(msg.sender, amount, stake);
 	}
 
  // Function that actually does the mint. Need to call this if you want to mint
 	function _mintHelper(address account, uint256 amount, bool stake) internal nonReentrant {
-		
+
 		require(amount >0, "Amount too small");    // amount of tokens you want to mint
 		uint256 _totalSupply = totalSupply;        // Total Supply of minted Tokens
 
@@ -115,12 +116,12 @@ contract CosmicCaps is ERC721Stakable, ReentrancyGuardUpgradeable {
 
 
 
- /*Modifier is used to check if account used to mint is not a contract. 
+ /*Modifier is used to check if account used to mint is not a contract.
    Does this by checking the code size of the address, which has to be 0 for non-contracts. */
 	modifier noContract() {
 		address account = msg.sender;  //checks that the account is the caller of the function
 		require(account == tx.origin, "Caller is a contract");
-		uint256 size = 0; 
+		uint256 size = 0;
 		assembly {
 			size := extcodesize(account)
 		}
@@ -140,9 +141,9 @@ contract CosmicCaps is ERC721Stakable, ReentrancyGuardUpgradeable {
   	}
 
 
- // Function to set Base URI 
+ // Function to set Base URI
   	function setBaseURI(string memory baseTokenURI) external onlyOwner {
         _baseTokenURI = baseTokenURI;
         URISet = true;
     }
-} 
+}
