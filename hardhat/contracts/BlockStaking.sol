@@ -83,16 +83,16 @@ contract BlockStaking is IERC721ReceiverUpgradeable, OwnableUpgradeable {
   }
 
   function onERC721Received(
-    address,
-    address,
+    address, //operator
+    address, //from (blockmint contract)
     uint256 tokenId,
     bytes calldata data
   ) external override returns (bytes4) {
     address token = msg.sender;
-    require(
-      tokenToStakedToken[token] != address(0),
+    /* require(
+      tokenToStakedToken[token] != address(0), //blockmint contract != address(0)
       "Caller is not an accepted token"
-    );
+    ); */
     address owner = abi.decode(data, (address));
     _stakeReceivedToken(owner, token, tokenId);
     return IERC721ReceiverUpgradeable.onERC721Received.selector;

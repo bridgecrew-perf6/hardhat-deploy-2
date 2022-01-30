@@ -26,13 +26,19 @@ const deployOptions: DeployFunction = async (hre) => {
 //     hre,
 // })
 
+// const wethDeploy = await deploy({
+//   contract: 'BlockStaking',
+//   // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+//   skipIfAlreadyDeployed: false,
+//   hre,
+// })
+
 const wethDeploy = await deploy({
-  contract: 'BlockStaking',
+  contract: 'BlockSmint',
   // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
   skipIfAlreadyDeployed: false,
   hre,
 })
-
 
 }
 
