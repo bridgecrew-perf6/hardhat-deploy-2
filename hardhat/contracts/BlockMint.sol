@@ -21,18 +21,7 @@ __________.__                 __   ___________
         \/                 \/     \/    \/                /_____/      \/
 
 
-╭━━━╮╱╱╱╱╱╱╱╱╱╱╱╱╱╭━━━╮
-┃╭━╮┃╱╱╱╱╱╱╱╱╱╱╱╱╱┃╭━╮┃
-┃┃╱╰╋━━┳━━┳╮╭┳┳━━╮┃┃╱╰╋━━┳━━┳━━╮
-┃┃╱╭┫╭╮┃━━┫╰╯┣┫╭━╯┃┃╱╭┫╭╮┃╭╮┃━━┫
-┃╰━╯┃╰╯┣━━┃┃┃┃┃╰━╮┃╰━╯┃╭╮┃╰╯┣━━┃
-╰━━━┻━━┻━━┻┻┻┻┻━━╯╰━━━┻╯╰┫╭━┻━━╯
-╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱┃┃
-╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╱╰╯
-
-
-
-credit to DerpyBirbs contract and team
+credits to Critterz, Meebits and CosmicCaps contracts and teams
 Cosmic Caps are fungi from far out in the shroomiverse, and they want to chill with you!
 
 */
@@ -43,81 +32,106 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	uint256 internal constant Reeserve_Supply = 300;
 	uint256 internal constant Public_Supply = Max_Supply - Reeserve_Supply;
 	uint256 internal constant price = 0.02 ether;
-	uint256 internal constant Max_Mint_Amount = 10;
 	uint256 internal constant Max_mint_per_transaction = 10;
-	/* uint256 internal constant Whitelist_Max_mint_per_wallet = 2; */
+	//uint256 internal constant Whitelist_Max_mint_per_wallet = 2;
 
-	 string internal _baseTokenURI;
-	 bool internal URISet = false;
+	uint[Max_Supply] private indices;
+	uint private nonce = 0;
 
-	/* bytes32 public WhitelistMerkleRoot;
-	string public WhitelistURI; */
 
-	/* bool public whitelistMintOpen; */
+	string internal _baseTokenURI;
+	bool internal URISet = false;
+
+
+	//bytes32 public WhitelistMerkleRoot;
+	//string public WhitelistURI;
+
+	//bool public whitelistMintOpen;
 	bool public publicMintOpen;
 
 	uint256 public totalSupply;
 
-	uint256 internal _reserveMinted;
+	//uint256 internal _reserveMinted;
 
-	/* mapping(address => uint256) public whitelistMintedCounts; */
+	//mapping(address => uint256) public whitelistMintedCounts;
 	mapping(address => uint256) public publicMintedCounts;
 
-	/* event WhitelistMintOpen(); */
+	event WhitelistMintOpen();
 	event PublicMintOpen();
+	event Deposit(address indexed _from, uint256 indexed _id, uint _value);
+
+
 
  /*
   WRITE FUNCTIONS
   */
 
- // Function to initialize token, metadata and staking address
-	function initalize(address _stakingAddress, string memory baseTokenURI) public  initializer {
-		__ERC721Stakable_init("BlockForge","BLKF"); // Initialize Token Name and Symbol
-		__ReentrancyGuard_init_unchained();
 
-		stakingAddress = _stakingAddress;  // Set Staking Address
-		_baseTokenURI = baseTokenURI;
+ 	// Function to initialize token, metadata and staking address
+	constructor (address _stakingAddress) ERC721("BlockForge","BKLF") {
+		StakingAddress = _stakingAddress;
 	}
 
- // Function to view baseURI
+ //  Function to generate random ID => Credits to LarvaLabs Meebits Contract
+	function randomIndex() internal returns (uint) {
+			 uint totalSize = Max_Supply - totalSupply;
+			 uint index = uint(keccak256(abi.encodePacked(nonce, msg.sender, block.difficulty, block.timestamp))) % totalSize;
+			 uint value = 0;
 
- 	function _baseURI() internal view virtual override returns(string memory){
- 		return _baseTokenURI;
- 	}
+			 if (indices[index] != 0) {
+					 value = indices[index];
+			 } else {
+					 value = index;
+			 }
 
- // Function to mint, can be called externally but cannot be called by a contract address
-	function mint(uint256 amount, bool stake) external noContract{
+			 // Move last value to selected position
+			 if (indices[totalSize - 1] == 0) {
+					 // Array position not initialized, so use position
+					 indices[index] = totalSize - 1;
+			 } else {
+					 // Array position holds a value so use that
+					 indices[index] = indices[totalSize - 1];
+			 }
+			 nonce++;
+			 // Don't allow a zero index, start counting at 1
+			 return value+1;
+	 }
+
+
+ 	// Function to mint, can be called externally but cannot be called by a contract address
+	function mint(uint256 amount, bool stake) external payable noContract{
 		uint256 newMintedAmount = publicMintedCounts[msg.sender] + amount;
 		require(totalSupply + amount <= Public_Supply, "Token Limit Reached"); //Ensure there is supply before minting
-		/* require(newMintedAmount <= Max_Mint_Amount, "Public Mint Limit Reached"); */
+		//require(newMintedAmount <= 1, "Public Mint Limit Reached");
 		publicMintedCounts[msg.sender] = newMintedAmount;
 		_mintHelper(msg.sender, amount, stake);
 	}
 
- // Function that actually does the mint. Need to call this if you want to mint
+
+ 	// Function that actually does the mint. Need to call this if you want to mint
 	function _mintHelper(address account, uint256 amount, bool stake) internal nonReentrant {
-
-		require(amount >0, "Amount too small");    // amount of tokens you want to mint
+		uint _id;
+		require(amount >0, "Amount too small");    		// amount of tokens you want to mint
+		require(msg.value == price * amount);	 			// Ensures Mint Price is Applied
 		uint256 _totalSupply = totalSupply;        // Total Supply of minted Tokens
-
-		for(uint256 i=0; i< amount; i++) {
-
+		for(uint256 i = 0; i < amount; i++) {
+			//_id = randomIndex();								 // commented out for test purposes, change before hardhat deploys or actual deploy
 			_safeMint(
-				stake ? stakingAddress: account,   // Checks if bool stake = yes, then send to staking address if no, then send to account
-				_totalSupply+i,					   // Increment Total Supply of minted tokens
-				abi.encode(account)                // Not sure why this is done
+				stake ? StakingAddress: account,   // Checks if bool stake = yes, then send to staking address if no, then send to account
+				_totalSupply + i,//_id,					   							// Increment Total Supply of minted tokens
+				abi.encode(account)              // Not sure why this is done
 			);
-
+			emit Deposit(msg.sender, _totalSupply + i , msg.value);
 		}
 
 		totalSupply += amount; // => Critterz say this could be vunerable to re-entracy
 	}
 
 
-
-
- /*Modifier is used to check if account used to mint is not a contract.
-   Does this by checking the code size of the address, which has to be 0 for non-contracts. */
+ 	/**
+ 	 * Modifier is used to check if account used to mint is not a contract.
+   * Does this by checking the code size of the address, which has to be 0 for non-contracts.
+  */
 	modifier noContract() {
 		address account = msg.sender;  //checks that the account is the caller of the function
 		require(account == tx.origin, "Caller is a contract");
@@ -130,18 +144,38 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	}
 
 
+
+ /*
+  READ FUNCTIONS
+  */
+
+
+ 	// Function to view baseURI
+
+ 	function _baseURI() internal view virtual override returns(string memory){
+ 		return _baseTokenURI;
+ 	}
+
+
  /*
   OWNER FUNCTIONS
   */
 
- //  Function to Open Public mint
+ 	//  Function to Open Public mint
+
   	function setPublicMintOpen(bool open) external onlyOwner {
     	publicMintOpen = open;
     	emit PublicMintOpen();
   	}
 
+ 	//  Function to Set Staking Address/Change Staking address
 
- // Function to set Base URI
+ 	function setStakingAddress(address _StakingAddress) public onlyOwner {
+   	StakingAddress = _StakingAddress;
+  	}
+
+ 	// Function to set Base URI
+
   	function setBaseURI(string memory baseTokenURI) external onlyOwner {
         _baseTokenURI = baseTokenURI;
         URISet = true;

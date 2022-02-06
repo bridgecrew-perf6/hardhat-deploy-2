@@ -1,25 +1,25 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract ERC721Stakable is ERC721Upgradeable, OwnableUpgradeable {
-  address public stakingAddress;
+abstract contract ERC721Stakable is ERC721, Ownable {
+  address public StakingAddress;
 
-  function __ERC721Stakable_init(string memory name_, string memory symbol_)
-    internal
-    initializer
-  {
-    __ERC721_init(name_, symbol_);
-    __Ownable_init_unchained();
-  }
+  // function __ERC721Stakable_init(string memory name_, string memory symbol_)
+  //   internal
+    
+  // {
+  //  // __ERC721_init(name_, symbol_);
+  //  // __Ownable_init_unchained();
+  // }
 
-  function __ERC721Stakable_init_unchained() internal initializer {}
+  // function __ERC721Stakable_init_unchained() internal {}
 
-  function setStakingAddress(address _stakingAddress) external onlyOwner {
-    stakingAddress = _stakingAddress;
-  }
+  // function setStakingAddress(address _stakingAddress) external onlyOwner {
+  //   stakingAddress = _stakingAddress;
+  // }
 
   /*
   OVERRIDE FUNCTIONS
@@ -35,7 +35,7 @@ abstract contract ERC721Stakable is ERC721Upgradeable, OwnableUpgradeable {
   ) public virtual override {
     address sender = _msgSender();
     require(
-      _isApprovedOrOwner(sender, tokenId) || sender == stakingAddress,
+      _isApprovedOrOwner(sender, tokenId) || sender == StakingAddress,
       "ERC721: transfer caller is not owner nor approved"
     );
 

@@ -1,62 +1,38 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 import "./IERC721Staked.sol";
 
-contract BlockStaking is IERC721ReceiverUpgradeable, OwnableUpgradeable {
-  using SafeMath for uint256;
+contract BlockStaking is IERC721Receiver, Ownable {
 
-  /*
-  GLOBAL STATE
-  */
 
-  mapping(address => mapping(uint256 => address)) public stakings;
-  mapping(address => address) public tokenToStakedToken;
+mapping(address => mapping(uint256 => address)) public stakings;
+mapping(address => address) public tokenToStakedToken;
 
-  function initialize() public initializer {
-    __Ownable_init();
-  }
 
-  /*
-  WRITE FUNCTIONS
-  */
-
-  function stake(
+function stake(
     address account,
     address token,
     uint256[] calldata stakeIds
-  ) external onlyAccountOrToken(account, token) {
+  ) external  {
     for (uint256 i = 0; i < stakeIds.length; i++) {
       _stakeToken(account, token, stakeIds[i]);
     }
   }
 
-  function unstake(
-    address account,
-    address token,
-    uint256[] calldata stakeIds
-  ) external onlyAccountOrToken(account, token) {
-    for (uint256 i = 0; i < stakeIds.length; i++) {
-      uint256 tokenId = stakeIds[i];
-      _unstakeToken(account, token, tokenId);
-    }
-  }
-
-  function _stakeToken(
+function _stakeToken(
     address staker,
     address token,
     uint256 tokenId
-  ) private {
+  ) public {
     IERC721(token).transferFrom(staker, address(this), tokenId);
     IERC721Staked(tokenToStakedToken[token]).mint(staker, tokenId);
     stakings[token][tokenId] = staker;
   }
+
 
   function _stakeReceivedToken(
     address staker,
@@ -71,31 +47,20 @@ contract BlockStaking is IERC721ReceiverUpgradeable, OwnableUpgradeable {
     stakings[token][tokenId] = staker;
   }
 
-  function _unstakeToken(
-    address staker,
-    address token,
-    uint256 tokenId
-  ) private {
-    IERC721(token).transferFrom(address(this), staker, tokenId);
-    IERC721Staked(tokenToStakedToken[token]).burn(tokenId);
-    require(stakings[token][tokenId] == staker, "Could not unstake token");
-    delete stakings[token][tokenId];
-  }
-
-  function onERC721Received(
+function onERC721Received(
     address, //operator
     address, //from (blockmint contract)
     uint256 tokenId,
     bytes calldata data
   ) external override returns (bytes4) {
     address token = msg.sender;
-    /* require(
-      tokenToStakedToken[token] != address(0), //blockmint contract != address(0)
-      "Caller is not an accepted token"
-    ); */
+     require(
+       tokenToStakedToken[token] != address(0), //blockmint contract != address(0)
+       "Caller is not an accepted token"
+    );
     address owner = abi.decode(data, (address));
     _stakeReceivedToken(owner, token, tokenId);
-    return IERC721ReceiverUpgradeable.onERC721Received.selector;
+    return IERC721Receiver.onERC721Received.selector;
   }
 
   /*
@@ -112,17 +77,13 @@ contract BlockStaking is IERC721ReceiverUpgradeable, OwnableUpgradeable {
     return owner;
   }
 
-  /*
-  OWNER FUNCTIONS
-  */
-
+  //Function to add BlockMint => BlockStaking Address
   function addTokenPair(address token, address stakedToken) external onlyOwner {
     tokenToStakedToken[token] = stakedToken;
   }
 
-  /*
-  MODIFIER
-  */
+
+
 
   modifier onlyAccountOrToken(address account, address token) {
     require(
@@ -130,5 +91,5 @@ contract BlockStaking is IERC721ReceiverUpgradeable, OwnableUpgradeable {
       "Caller is not account nor token contract"
     );
     _;
-  }
+	}
 }
