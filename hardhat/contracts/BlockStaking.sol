@@ -27,7 +27,7 @@ function _stakeToken(
     address staker,
     address token,
     uint256 tokenId
-  ) public {
+  ) private {
     IERC721(token).transferFrom(staker, address(this), tokenId);
     IERC721Staked(tokenToStakedToken[token]).mint(staker, tokenId);
     stakings[token][tokenId] = staker;

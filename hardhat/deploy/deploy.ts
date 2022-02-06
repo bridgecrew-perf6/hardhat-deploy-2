@@ -18,24 +18,26 @@ const deployOptions: DeployFunction = async (hre) => {
   log('********** Deploying **********', { indent: 1 })
   log('')
 
-//
-//   const wethDeploy = await deploy({
-//     contract: 'BlockMint',
-//     // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
-//     skipIfAlreadyDeployed: false,
-//     hre,
-// })
+
+
 
 // const wethDeploy = await deploy({
 //   contract: 'BlockStaking',
-//   // args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+//   //args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+//   skipIfAlreadyDeployed: false,
+//   hre,
+// })
+
+// const wethDeploy = await deploy({
+//   contract: 'BlockMint',
+//   args: ['0x7A46186e52b5AD72CC8E2eE8311320D4a03ac0d3'],
 //   skipIfAlreadyDeployed: false,
 //   hre,
 // })
 
 const wethDeploy = await deploy({
-  contract: 'BlockStaking',
-  //args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+  contract: 'sBlock',
+  args: ['ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
   skipIfAlreadyDeployed: false,
   hre,
 })
