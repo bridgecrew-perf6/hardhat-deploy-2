@@ -22,5 +22,12 @@ string internal _baseTokenURI;
     _safeMint(to, tokenId);
   }
 
+  function burn(uint256 tokenId)
+   external
+   virtual
+   override
+ {
+   _burn(tokenId);
+ }
 
 }

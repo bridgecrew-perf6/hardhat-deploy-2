@@ -60,6 +60,10 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	event PublicMintOpen();
 	event Deposit(address indexed _from, uint256 indexed _id, uint _value);
 
+	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
+	//address payable internal jukabo = payable();
+	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
+
 
 
  /*
@@ -68,11 +72,13 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 
 
  	// Function to initialize token, metadata and staking address
+
 	constructor (address _stakingAddress) ERC721("BlockForge","BKLF") {
 		StakingAddress = _stakingAddress;
 	}
 
  //  Function to generate random ID => Credits to LarvaLabs Meebits Contract
+
 	function randomIndex() internal returns (uint) {
 			 uint totalSize = Max_Supply - totalSupply;
 			 uint index = uint(keccak256(abi.encodePacked(nonce, msg.sender, block.difficulty, block.timestamp))) % totalSize;
@@ -98,7 +104,8 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	 }
 
 
- 	// Function to mint, can be called externally but cannot be called by a contract address
+ 	// Function to mint, can be called externally but cannot be called by a contract address => Credits to Critterz
+
 	function mint(uint256 amount, bool stake) external payable noContract{
 		uint256 newMintedAmount = publicMintedCounts[msg.sender] + amount;
 		require(totalSupply + amount <= Public_Supply, "Token Limit Reached"); //Ensure there is supply before minting
@@ -108,9 +115,10 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	}
 
 
- 	// Function that actually does the mint. Need to call this if you want to mint
+ 	// Function that actually does the mint. Need to call this if you want to mint => Credits to Critterz
+
 	function _mintHelper(address account, uint256 amount, bool stake) internal nonReentrant {
-		uint _id;
+		//uint _id;
 		require(amount >0, "Amount too small");    		// amount of tokens you want to mint
 		require(msg.value == price * amount);	 			// Ensures Mint Price is Applied
 		uint256 _totalSupply = totalSupply;        // Total Supply of minted Tokens
@@ -163,21 +171,27 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 
  	//  Function to Open Public mint
 
-  	function setPublicMintOpen(bool open) external onlyOwner {
-    	publicMintOpen = open;
-    	emit PublicMintOpen();
-  	}
+  function setPublicMintOpen(bool open) external onlyOwner {
+    publicMintOpen = open;
+  	emit PublicMintOpen();
+  }
 
  	//  Function to Set Staking Address/Change Staking address
 
  	function setStakingAddress(address _StakingAddress) public onlyOwner {
    	StakingAddress = _StakingAddress;
-  	}
+  }
 
  	// Function to set Base URI
 
-  	function setBaseURI(string memory baseTokenURI) external onlyOwner {
-        _baseTokenURI = baseTokenURI;
-        URISet = true;
-    }
+  function setBaseURI(string memory baseTokenURI) external onlyOwner {
+    _baseTokenURI = baseTokenURI;
+    URISet = true;
+  }
+
+	/* function withdrawFunds() external virtual {
+		uint256 balance = address(this).balance;
+		jukabo.transfer(balance);
+	}
+	 */
 }
