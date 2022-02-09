@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./ERC721Staked.sol";
 
 
-contract SBlock is ERC721Staked {
+contract sBlock is ERC721Staked {
 
 string internal _baseTokenURI;
 
