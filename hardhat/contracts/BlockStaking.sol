@@ -14,14 +14,26 @@ mapping(address => address) public tokenToStakedToken;
 
 
 function stake(
-    address account,
-    address token,
-    uint256[] calldata stakeIds
+    address account,                    // Staking Account
+    address token,                    // Token Address(BLKF)
+    uint256[] calldata stakeIds     // Token Ids you want to stake
   ) external  {
     for (uint256 i = 0; i < stakeIds.length; i++) {
-      _stakeToken(account, token, stakeIds[i]);
+      _stakeToken(account, token, stakeIds[i]);       // Calls _stakeToken for each Token ID chosen to stake
     }
   }
+
+  function unstake(
+   address account,
+   address token,
+   uint256[] calldata stakeIds
+ ) external onlyAccountOrToken(account, token) {
+   for (uint256 i = 0; i < stakeIds.length; i++) {
+     uint256 tokenId = stakeIds[i];
+     _unstakeToken(account, token, tokenId);
+   }
+ }
+
 
 function _stakeToken(
     address staker,
@@ -33,6 +45,16 @@ function _stakeToken(
     stakings[token][tokenId] = staker;
   }
 
+  function _unstakeToken(
+    address staker,
+    address token,
+    uint256 tokenId
+  ) private {
+    IERC721(token).transferFrom(address(this), staker, tokenId);
+    IERC721Staked(tokenToStakedToken[token]).burn(tokenId);
+    require(stakings[token][tokenId] == staker, "Could not unstake token");
+    delete stakings[token][tokenId];
+  }
 
   function _stakeReceivedToken(
     address staker,
