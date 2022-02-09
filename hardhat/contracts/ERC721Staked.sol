@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./IERC721Staked.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "./access/Delegatable.sol";
 
 abstract contract ERC721Staked is
   IERC721Staked,
@@ -20,6 +21,7 @@ abstract contract ERC721Staked is
     virtual
     override
     nonReentrant
+    onlyDelegate(MINT_ROLE)
   {
     _safeMint(to, tokenId);
   }
@@ -28,6 +30,7 @@ abstract contract ERC721Staked is
    external
    virtual
    override
+   onlyDelegate(BURN_ROLE)
  {
    _burn(tokenId);
  }

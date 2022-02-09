@@ -18,6 +18,7 @@ string internal _baseTokenURI;
     virtual
     override
     nonReentrant
+    onlyDelegate(MINT_ROLE)
   {
     _safeMint(to, tokenId);
   }
@@ -26,6 +27,7 @@ string internal _baseTokenURI;
    external
    virtual
    override
+   onlyDelegate(BURN_ROLE)
  {
    _burn(tokenId);
  }
