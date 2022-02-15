@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -11,13 +12,7 @@ abstract contract Delegatable is Ownable {
   mapping(address => uint256) public delegates;
 
   event DelegateUpdated(address indexed delegate, uint256 indexed roles);
-
-  function __Delegatable_init() internal initializer {
-    __Ownable_init();
-  }
-
-  function __Delegatable_init_unchained() internal initializer {}
-
+  // need to initialize ownable
   /*
   READ FUNCTIONS
   */

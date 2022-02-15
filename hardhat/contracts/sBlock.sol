@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./ERC721Staked.sol";
 
 
-contract sBlock is ERC721Staked {
+ abstract contract SBlock is ERC721Staked {
 
 string internal _baseTokenURI;
 
@@ -13,8 +13,7 @@ string internal _baseTokenURI;
     _baseTokenURI = baseTokenURI;
   }
 
-
-  function mint(address to, uint256 tokenId)
+  /* function mint(address to, uint256 tokenId)
     external
     virtual
     override
@@ -33,8 +32,29 @@ string internal _baseTokenURI;
    _burn(tokenId);
  }
 
+ function revoke(uint256 tokenId) external virtual override {
+    address provenance = leases[tokenId].provenance;
+    require(provenance == msg.sender, "Caller is not provenance");
+    _transfer(ownerOf(tokenId), provenance, tokenId);
+  }
+
+ function transferFrom(
+   address from,
+   address to,
+   uint256 tokenId
+ ) public virtual override(ERC721, IERC721) {
+   address sender = _msgSender();
+   require(
+     _isApprovedOrOwner(sender, tokenId) || hasRoles(sender, TRANSFER_ROLE),
+     "ERC721: transfer caller is not owner nor approved"
+   );
+
+   _transfer(from, to, tokenId);
+ } */
 
  function setBaseURI(string memory baseTokenURI) external onlyOwner {
    _baseTokenURI = baseTokenURI;
+
+}
 
 }
