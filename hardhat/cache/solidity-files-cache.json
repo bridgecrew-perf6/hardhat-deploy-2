@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\access\\Delegatable.sol": {
-      "lastModificationDate": 1643527987475,
+      "lastModificationDate": 1644373050760,
       "contentHash": "89ea2c3c5b3797128ac113714bc4605b",
       "sourceName": "contracts/access/Delegatable.sol",
       "solcConfig": {
@@ -220,8 +220,8 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\BlockMint.sol": {
-      "lastModificationDate": 1644173644657,
-      "contentHash": "1fb082d8e66beafb1407f6e6f48b7e78",
+      "lastModificationDate": 1644373070704,
+      "contentHash": "590b6f4bf85e9429b7a86f2a9742938a",
       "sourceName": "contracts/BlockMint.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -405,7 +405,7 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\ERC721Stakable.sol": {
-      "lastModificationDate": 1644173644662,
+      "lastModificationDate": 1644373050759,
       "contentHash": "e21cf42d1ab0fb929ab87ff97824d60b",
       "sourceName": "contracts/ERC721Stakable.sol",
       "solcConfig": {
@@ -1187,8 +1187,8 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\BlockStaking.sol": {
-      "lastModificationDate": 1644173644659,
-      "contentHash": "b7553ff155785111052b80eeaac16541",
+      "lastModificationDate": 1644373074025,
+      "contentHash": "45714df980ef5ca5f231d47e615ee311",
       "sourceName": "contracts/BlockStaking.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1234,8 +1234,8 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\IERC721Staked.sol": {
-      "lastModificationDate": 1644173644672,
-      "contentHash": "3a5365fd45c6453b9ba9e366ed5f6e60",
+      "lastModificationDate": 1644373086806,
+      "contentHash": "c49ee8d9909da9a939662bc3847501ae",
       "sourceName": "contracts/IERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1278,8 +1278,8 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\ERC721Staked.sol": {
-      "lastModificationDate": 1644173644666,
-      "contentHash": "71e26fa011991ccc8fa6a5b513b584fa",
+      "lastModificationDate": 1644373084345,
+      "contentHash": "f2ebeb44cc531537e249a252da8d20a6",
       "sourceName": "contracts/ERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1366,8 +1366,8 @@
       ]
     },
     "G:\\dapps\\solidity-template-monorepo\\hardhat\\contracts\\sBlock.sol": {
-      "lastModificationDate": 1644175205585,
-      "contentHash": "ab3c678f2059ffef4a0c9b74fb8d0540",
+      "lastModificationDate": 1644373079555,
+      "contentHash": "ef6198421061c1c7ab7857eeaa4a8b42",
       "sourceName": "contracts/sBlock.sol",
       "solcConfig": {
         "version": "0.8.4",

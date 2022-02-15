@@ -9,8 +9,12 @@ import "./access/Delegatable.sol";
 abstract contract ERC721Staked is
   IERC721Staked,
   ERC721,
+  Delegatable,
   ReentrancyGuardUpgradeable
 {
+
+uint256 public constant MINT_ROLE = 1;
+uint256 public constant BURN_ROLE = 2;
 
   /*
   WRITE FUNCTIONS
