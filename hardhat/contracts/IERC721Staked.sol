@@ -8,7 +8,7 @@ interface IERC721Staked is IERC721 {
 
   function mint(address to, uint256 tokenId) external;
 
-//  function revoke(uint256 tokenId) external;
+  function revoke(uint256 tokenId) external;
 
-  //function setLockDuration(uint256 tokenId, uint256 lockDuration) external;
+  function setLockDuration(uint256 tokenId, uint256 lockDuration) external;
 }

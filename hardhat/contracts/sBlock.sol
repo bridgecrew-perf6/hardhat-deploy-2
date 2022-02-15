@@ -13,6 +13,7 @@ string internal _baseTokenURI;
     _baseTokenURI = baseTokenURI;
   }
 
+
   function mint(address to, uint256 tokenId)
     external
     virtual
@@ -31,5 +32,9 @@ string internal _baseTokenURI;
  {
    _burn(tokenId);
  }
+
+
+ function setBaseURI(string memory baseTokenURI) external onlyOwner {
+   _baseTokenURI = baseTokenURI;
 
 }

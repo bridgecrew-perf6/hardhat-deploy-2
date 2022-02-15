@@ -1,14 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @dev Contract module for delegating role based access control to acounts.
  * Roles are represented by bit flags.
  */
-abstract contract Delegatable is OwnableUpgradeable {
+abstract contract Delegatable is Ownable {
   mapping(address => uint256) public delegates;
 
   event DelegateUpdated(address indexed delegate, uint256 indexed roles);
