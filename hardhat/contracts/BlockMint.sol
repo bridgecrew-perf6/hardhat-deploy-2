@@ -61,7 +61,7 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	event Deposit(address indexed _from, uint256 indexed _id, uint _value);
 
 	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
-	//address payable internal jukabo = payable();
+	/* address payable internal jukabo = payable(); */
 	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
 
 

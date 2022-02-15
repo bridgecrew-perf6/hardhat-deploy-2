@@ -25,6 +25,9 @@ abstract contract ERC721Staked is
     uint48 lockExpiration;
   }
 
+uint256 public constant MINT_ROLE = 1;
+uint256 public constant BURN_ROLE = 2;
+
   /*
   WRITE FUNCTIONS
   */

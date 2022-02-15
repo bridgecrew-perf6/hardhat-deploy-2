@@ -4,3 +4,4 @@ deployments/*
 node_modules
 mnemonic.txt
 mnemonic.json
+*.dbg.json
