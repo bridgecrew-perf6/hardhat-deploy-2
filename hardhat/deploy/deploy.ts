@@ -21,23 +21,22 @@ const deployOptions: DeployFunction = async (hre) => {
 
 
 
-// const wethDeploy = await deploy({
-//   contract: 'BlockStaking',
-//   //args: ['Cosmic Caps', 'COSMIC', 'ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
-//   skipIfAlreadyDeployed: false,
-//   hre,
-// })
+const blockStaking = await deploy({
+  contract: 'BlockStaking',
+  skipIfAlreadyDeployed: false,
+  hre,
+})
 
-// const wethDeploy = await deploy({
-//   contract: 'BlockMint',
-//   args: ['0x7A46186e52b5AD72CC8E2eE8311320D4a03ac0d3'],
-//   skipIfAlreadyDeployed: false,
-//   hre,
-// })
+const blockMint = await deploy({
+  contract: 'BlockMint',
+  args: [blockStaking.address],
+  skipIfAlreadyDeployed: false,
+  hre,
+})
 
-const wethDeploy = await deploy({
+const sBlock = await deploy({
   contract: 'sBlock',
-  args: ['ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
+  // args: ['ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
   skipIfAlreadyDeployed: false,
   hre,
 })

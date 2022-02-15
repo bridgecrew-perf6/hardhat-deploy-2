@@ -10,7 +10,7 @@ contract sBlock is ERC721Staked {
 string internal _baseTokenURI;
 
   constructor (string memory baseTokenURI) ERC721("sBlockForge","sBKLF") {
-    _baseTokenURI = baseTokenURI;
+      _baseTokenURI = baseTokenURI;
   }
 
 
@@ -37,4 +37,5 @@ string internal _baseTokenURI;
  function setBaseURI(string memory baseTokenURI) external onlyOwner {
    _baseTokenURI = baseTokenURI;
 
+    }
 }
