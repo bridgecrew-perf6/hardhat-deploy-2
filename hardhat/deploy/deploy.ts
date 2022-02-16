@@ -19,29 +19,31 @@ const deployOptions: DeployFunction = async (hre) => {
   log('')
 
 
+  // const blockStaking = await deploy({
+  //   contract: 'BlockStaking',
+  //   args: [ ],
+  //   skipIfAlreadyDeployed: false,
+  //   hre,
+  // })
 
+  // const blockMint = await deploy({
+  //   contract: 'BlockMint',
+  //   args: [blockStaking.address],
+  //   skipIfAlreadyDeployed: false,
+  //   hre,
+  // })
 
-  const blockStaking = await deploy({
-    contract: 'BlockStaking',
+  const sblock = await deploy({
+    contract: 'SBlock',
+    args: ["ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/"],
     skipIfAlreadyDeployed: false,
     hre,
   })
+}
 
-  const blockMint = await deploy({
-    contract: 'BlockMint',
-    args: [blockStaking.address],
-    skipIfAlreadyDeployed: false,
-    hre,
-  })
 
-  const sBlock = await deploy({
-    contract: 'sBlock',
-    args: ['ipfs://QmcCsHvjMsCRRjG9YPLB1XepNoUVXoG5h3L93Yea8srd4w/'],
-    skipIfAlreadyDeployed: false,
-    hre,
-  })
 
-deployOptions.tags = []
+deployOptions.tags = ['primary']
 deployOptions.dependencies = []
 
 export default deployOptions

@@ -132,8 +132,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\ERC721Staked.sol": {
-      "lastModificationDate": 1644965839695,
-      "contentHash": "fc80e7c2914a2613a3da425460d46dea",
+      "lastModificationDate": 1644982345017,
+      "contentHash": "620b54493304e0d4c9ee8a8d1db76d15",
       "sourceName": "contracts/ERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -179,8 +179,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\IERC721Staked.sol": {
-      "lastModificationDate": 1644965300173,
-      "contentHash": "64c9e4d810565b5f6759d449a5c86caf",
+      "lastModificationDate": 1644982219905,
+      "contentHash": "031f1bdcdcc12a3a3e47fb052370c6df",
       "sourceName": "contracts/IERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -659,8 +659,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\sBlock.sol": {
-      "lastModificationDate": 1644966208142,
-      "contentHash": "392e28183b82438a93a047e879290fa1",
+      "lastModificationDate": 1644982329853,
+      "contentHash": "32ea6680b67d5a28b73dd50c75ce8be6",
       "sourceName": "contracts/sBlock.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1279,8 +1279,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\BlockStaking.sol": {
-      "lastModificationDate": 1644381803682,
-      "contentHash": "45714df980ef5ca5f231d47e615ee311",
+      "lastModificationDate": 1644981789204,
+      "contentHash": "c05066ce0da8bf51f7b39ac057118d89",
       "sourceName": "contracts/BlockStaking.sol",
       "solcConfig": {
         "version": "0.8.4",

@@ -11,11 +11,11 @@ contract BlockStaking is IERC721Receiver, Ownable {
 
 mapping(address => mapping(uint256 => address)) public stakings;
 mapping(address => address) public tokenToStakedToken;
-
+uint256 nothing = 0;
 
 function stake(
     address account,                    // Staking Account
-    address token,                    // Token Address(BLKF)
+    address token,                    // Token Address(
     uint256[] calldata stakeIds     // Token Ids you want to stake
   ) external  {
     for (uint256 i = 0; i < stakeIds.length; i++) {

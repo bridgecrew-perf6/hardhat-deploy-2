@@ -11,25 +11,25 @@ abstract contract ERC721Staked is
   Delegatable,
   ReentrancyGuardUpgradeable
 {
-  uint256 public constant DEFAULT_LOCK_DURATION = 60 * 60 * 24 * 7; // 7 days
+  /* uint256 public constant DEFAULT_LOCK_DURATION = 60 * 60 * 24 * 7; // 7 days
 
   uint256 public constant MINT_ROLE = 1;
-  uint256 public constant BURN_ROLE = 2;
+  uint256 public constant BURN_ROLE = 2; */
   uint256 public constant TRANSFER_ROLE = 3;
 
-  mapping(uint256 => uint256) public lockDurations;
+
+  /* mapping(uint256 => uint256) public lockDurations;
   mapping(uint256 => Lease) private leases;
 
   struct Lease {
     address provenance;
     uint48 lockExpiration;
-  }
-
+  } */
   /*
   WRITE FUNCTIONS
   */
 
-  function mint(address to, uint256 tokenId)
+   /* function mint(address to, uint256 tokenId)
     external
     virtual
     override
@@ -52,8 +52,9 @@ abstract contract ERC721Staked is
     address provenance = leases[tokenId].provenance;
     require(provenance == msg.sender, "Caller is not provenance");
     _transfer(ownerOf(tokenId), provenance, tokenId);
-  }
-  
+  } */
+
+
  function transferFrom(
    address from,
    address to,
@@ -68,7 +69,7 @@ abstract contract ERC721Staked is
    _transfer(from, to, tokenId);
  }
 
- function _beforeTokenTransfer(
+  /* function _beforeTokenTransfer(
     address from,
     address to,
     uint256 tokenId
@@ -127,6 +128,6 @@ abstract contract ERC721Staked is
     if (lockDuration == 0) {
       lockDuration = DEFAULT_LOCK_DURATION;
     }
-  }
+  } */
 
 }
