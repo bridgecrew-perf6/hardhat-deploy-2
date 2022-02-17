@@ -29,15 +29,34 @@ Cosmic Caps are fungi from far out in the shroomiverse, and they want to chill w
 */
 
 contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
-    uint internal constant MAX_MINTS_PER_TRANSACTION = 32;
-    // uint internal constant TOKEN_LIMIT = 10;
-    uint internal constant TOKEN_LIMIT = 10000;
+
+
 
     uint private nonce = 0;
-    uint[TOKEN_LIMIT] private indices;
+    uint[PUBLIC_SUPPLY] private indices;
     uint private numTokens = 0;
 
+    uint internal constant PUBLIC_SUPPLY = 10000;
+    uint256 public totalSupply;
     uint256 internal _mintPrice = 0;
+    uint256 internal constant MAX_MINTS_PER_TRANSACTION = 4;
+    uint256 internal constant WHITELIST_MAX_MINT_PER_WALLET = 2;
+
+    // Minting Whitelist & Public list
+    bool public whitelistMintOpen = false;;
+    bool public publicMintOpen = false;;
+
+    bytes32 public whitelistMerkleRoot;
+
+    string public whitelistURI;
+
+    mapping(address => uint256) public whitelistMintedCounts;
+    mapping(address => uint256) public publicMintedCounts;
+
+
+
+    event WhitelistMintOpen();
+    event PublicMintOpen();
 
 
 
@@ -48,9 +67,7 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
 
 
 
-
     string internal _baseTokenURI;
-    bool internal saleStarted = false;
     bool internal metadataFrozen = false;
     bool internal URISet = false;
     uint internal devSupplyAwarded = 0;
@@ -73,7 +90,7 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
     * 28 of these will go to Treasure Chests holders.
     */
     function give32TokensToDevs() external onlyOwner {
-        require(saleStarted == false,"Sale has already started");
+        require(PublicMintOpen == false,"Sale has already started");
         require(devSupplyAwarded < 64,"Dev supply has already been awarded");
         uint i;
         uint id;
@@ -91,7 +108,7 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
     * Credits to LarvaLabs Meebits contract
     */
     function randomIndex() internal returns (uint) {
-        uint totalSize = TOKEN_LIMIT - numTokens;
+        uint totalSize = PUBLIC_SUPPLY - numTokens;
         uint index = uint(keccak256(abi.encodePacked(nonce, msg.sender, block.difficulty, block.timestamp))) % totalSize;
         uint value = 0;
 
@@ -124,10 +141,10 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
      */
     function mint(address to, uint amount) external payable{
         //check sale start
-        require(saleStarted == true, "Sale has not started yet.");
+        require(PublicMintOpen == true, "Sale has not started yet.");
 
         //only 9999 Cosmic Caps
-        require(numTokens < TOKEN_LIMIT, "Mint request exceeds total supply!");
+        require(numTokens < PUBLIC_SUPPLY, "Mint request exceeds total supply!");
 
         //mint at least one
         require(amount > 0, "Must mint at least one.");
@@ -136,7 +153,7 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
         require(amount <= MAX_MINTS_PER_TRANSACTION, "Mint exceeds limit per call.");
 
         //dont overmint
-        require(amount <= TOKEN_LIMIT-numTokens,"Mint request exceeds current supply!");
+        require(amount <= PUBLIC_SUPPLY-numTokens,"Mint request exceeds current supply!");
 
         //check payment
         require(msg.value == _mintPrice * amount, "msg.value invalid");
@@ -150,6 +167,73 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
             numTokens = numTokens + 1;
         }
 
+    }
+
+
+
+
+// add randomizer to whitelist white?
+    function whitelistMint(
+      uint256 amount,
+      bytes32[] calldata whitelistProof
+    ) external payable onlyWhitelist(whitelistProof) {
+      uint256 whitelistMintedCount = whitelistMintedCounts[msg.sender];
+      uint256 newWhitelistMintedCount = whitelistMintedCount + amount;
+      require(
+        totalSupply + amount <= PUBLIC_SUPPLY,
+        "Critterz supply limit reached"
+      );
+      require(whitelistMintOpen, "Whitelist minting closed");
+      require(
+        newWhitelistMintedCount <= WHITELIST_MAX_MINT_PER_WALLET,
+        "Whitelist mint amount too large"
+      );
+      require(msg.value == PRICE * amount, "Critterz price mismatch");
+
+      whitelistMintedCounts[msg.sender] = newWhitelistMintedCount;
+      _mintHelper(msg.sender, amount);
+    }
+
+    function _mintHelper(
+      address account,
+      uint256 amount,
+    ) internal nonReentrant {
+      require(amount > 0, "Amount too small");
+      uint256 _totalSupply = totalSupply;
+      /* for (uint256 i = 0; i < amount; i++) { */
+        /* _safeMint(
+          stake ? stakingAddress : account,
+          _totalSupply + i,
+          abi.encode(account)
+        ); */
+      /* } */
+      // this could be vulnerable to reentracy attacks
+      totalSupply += amount;
+    }
+
+    function availableWhitelistMint(bytes32[] memory whitelistProof)
+      external
+      view
+      returns (uint256)
+    {
+      if (_inWhitelist(whitelistProof)) {
+        return WHITELIST_MAX_MINT_PER_WALLET - whitelistMintedCounts[msg.sender];
+      } else {
+        return 0;
+      }
+    }
+
+    function _verify(
+      bytes32[] memory proof,
+      bytes32 root,
+      address _address
+    ) internal pure returns (bool) {
+      return
+        MerkleProof.verify(proof, root, keccak256(abi.encodePacked(_address)));
+    }
+
+    function _inWhitelist(bytes32[] memory proof) internal view returns (bool) {
+      return _verify(proof, whitelistMerkleRoot, msg.sender);
     }
 
 
@@ -169,28 +253,37 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
     * Devs cant change URI after the sale begins
     */
     function setBaseURI(string memory baseTokenURI) external onlyOwner {
-        require(metadataFrozen == false,"Can't change metadata after the sale has started");
+        require(metadataFrozen == false,"Cannot change metadata after the sale has started");
         _baseTokenURI = baseTokenURI;
         URISet = true;
     }
 
-
-     function setBaseURI(string memory baseTokenURI) external onlyOwner {
-       _baseTokenURI = baseTokenURI;
-       URISet = true;
-     }
 
 
     /**
     * Start the sale (cant be stopped later)
     */
     function startSale(uint256 mintPrice) external virtual onlyOwner {
-        require(saleStarted == false,"Sale has already started");
-        require(URISet == true, "URI not set");
+        require(PublicMintOpen == false,"Sale has already started");
+        /* require(URISet == true, "URI not set"); */
         /* mintPrice = 0.02 ether; d*/
-        require(mintPrice > 0.005 ether,"Price too low");
+        /* require(mintPrice > 0.005 ether,"Price too low"); */
         _mintPrice = mintPrice;
-        saleStarted = true;
+        PublicMintOpen = true;
+    }
+
+    function setPublicMintOpen(uint256 mintPrice) external virtual onlyOwner {
+      require(PublicMintOpen == false, "Public mint has already started");
+      _mintPrice = mintPrice;
+      publicMintOpen = true;
+      emit PublicMintOpen();
+    }
+
+    function setWhitelistMintOpen(uint256 mintPrice) external virtual onlyOwner {
+      require(WhitelistMintOpen == false, "Whitelist mint mint has already started");
+      _mintPrice = mintPrice;
+      whitelistMintOpen = true;
+      emit WhitelistMintOpen();
     }
 
     /**
@@ -217,15 +310,40 @@ contract CosmicCaps is Context, ERC721Enumerable, ERC721Burnable, Ownable {
     }
 
     function getMaxSupply() external pure returns (uint256) {
-        return TOKEN_LIMIT;
+        return PUBLIC_SUPPLY;
     }
 
     function getMintPrice() external view returns (uint256) {
         return _mintPrice;
     }
 
-    function hasSaleStarted() external view returns (bool) {
-        return saleStarted;
+    function hasPublicMintOpen() external view returns (bool) {
+        return PublicMintOpen;
+    }
+
+    /*
+    MODIFIER
+    */
+
+    modifier noContract() {
+      address account = msg.sender;
+      require(account == tx.origin, "Caller is a contract");
+      uint256 size = 0;
+      assembly {
+        size := extcodesize(account)
+      }
+      require(size == 0, "Caller is a contract");
+      _;
+    }
+
+    modifier onlyWhitelist(bytes32[] memory whitelistProof) {
+      require(_inWhitelist(whitelistProof), "Caller is not whitelisted");
+      _;
+    }
+
+    modifier onlyOgWhitelist(bytes32[] memory whitelistProof) {
+      require(_inOgWhitelist(whitelistProof), "Caller is not OG whitelisted");
+      _;
     }
 
 }
