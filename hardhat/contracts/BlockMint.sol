@@ -61,7 +61,7 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	event Deposit(address indexed _from, uint256 indexed _id, uint _value);
 
 	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
-	//address payable internal jukabo = payable();
+		address payable internal jukabo = payable(0xeBd5bF494CCF8a1fC7a42aa2edFB39B3890ea220);
 	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
 
 
@@ -189,9 +189,9 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
     URISet = true;
   }
 
-	/* function withdrawFunds() external virtual {
+	function withdrawFunds() external virtual {
 		uint256 balance = address(this).balance;
 		jukabo.transfer(balance);
 	}
-	 */
+
 }

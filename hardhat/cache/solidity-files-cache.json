@@ -132,8 +132,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\ERC721Staked.sol": {
-      "lastModificationDate": 1644982345017,
-      "contentHash": "620b54493304e0d4c9ee8a8d1db76d15",
+      "lastModificationDate": 1645479099103,
+      "contentHash": "55b45284a4f8d010dceb2129d57d2def",
       "sourceName": "contracts/ERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -179,8 +179,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\IERC721Staked.sol": {
-      "lastModificationDate": 1644982219905,
-      "contentHash": "031f1bdcdcc12a3a3e47fb052370c6df",
+      "lastModificationDate": 1645479113221,
+      "contentHash": "64c9e4d810565b5f6759d449a5c86caf",
       "sourceName": "contracts/IERC721Staked.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -659,8 +659,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\sBlock.sol": {
-      "lastModificationDate": 1644982329853,
-      "contentHash": "32ea6680b67d5a28b73dd50c75ce8be6",
+      "lastModificationDate": 1645478307389,
+      "contentHash": "c84334f66eca32b467d1cf01d8e50b9a",
       "sourceName": "contracts/sBlock.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1144,8 +1144,8 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\BlockMint.sol": {
-      "lastModificationDate": 1644381803681,
-      "contentHash": "590b6f4bf85e9429b7a86f2a9742938a",
+      "lastModificationDate": 1645478534476,
+      "contentHash": "41d662d4e959edc7950ec6faf612854a",
       "sourceName": "contracts/BlockMint.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1279,7 +1279,7 @@
       ]
     },
     "C:\\Users\\Olaga\\Projects\\Solidity_template\\hardhat-deploy\\hardhat\\contracts\\BlockStaking.sol": {
-      "lastModificationDate": 1644981789204,
+      "lastModificationDate": 1644984630321,
       "contentHash": "c05066ce0da8bf51f7b39ac057118d89",
       "sourceName": "contracts/BlockStaking.sol",
       "solcConfig": {
