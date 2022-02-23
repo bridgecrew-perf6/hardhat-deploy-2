@@ -33,7 +33,7 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	uint256 internal constant Public_Supply = Max_Supply - Reeserve_Supply;
 	uint256 internal constant price = 0.02 ether;
 	uint256 internal constant Max_mint_per_transaction = 10;
-	//uint256 internal constant Whitelist_Max_mint_per_wallet = 2;
+	uint256 internal constant WHITELIST_MAX_MINT_PER_WALLET = 2;
 
 	uint[Max_Supply] private indices;
 	uint private nonce = 0;
@@ -43,26 +43,23 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	bool internal URISet = false;
 
 
-	//bytes32 public WhitelistMerkleRoot;
+	bytes32 public whitelistMerkleRoot;
+
 	//string public WhitelistURI;
 
-	//bool public whitelistMintOpen;
+	bool public whitelistMintOpen;
 	bool public publicMintOpen;
 
 	uint256 public totalSupply;
 
 	//uint256 internal _reserveMinted;
 
-	//mapping(address => uint256) public whitelistMintedCounts;
+	mapping(address => uint256) public whitelistMintedCounts;
 	mapping(address => uint256) public publicMintedCounts;
 
 	event WhitelistMintOpen();
 	event PublicMintOpen();
 	event Deposit(address indexed _from, uint256 indexed _id, uint _value);
-
-	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
-		address payable internal jukabo = payable(0xeBd5bF494CCF8a1fC7a42aa2edFB39B3890ea220);
-	//  REMOVE TESTNET ADDRESSES BEFORE DEPLOYMENT ON MAINNET
 
 
 
@@ -72,13 +69,11 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 
 
  	// Function to initialize token, metadata and staking address
-
 	constructor (address _stakingAddress) ERC721("BlockForge","BKLF") {
 		StakingAddress = _stakingAddress;
 	}
 
  //  Function to generate random ID => Credits to LarvaLabs Meebits Contract
-
 	function randomIndex() internal returns (uint) {
 			 uint totalSize = Max_Supply - totalSupply;
 			 uint index = uint(keccak256(abi.encodePacked(nonce, msg.sender, block.difficulty, block.timestamp))) % totalSize;
@@ -103,20 +98,32 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 			 return value+1;
 	 }
 
+	function whitelistMint(uint256 amount, bool stake, bytes32[] calldata whitelistProof) external payable onlyWhitelist(whitelistProof) {
+		uint256 whitelistMintedCount = whitelistMintedCounts[msg.sender];
+		uint256 newWhitelistMintedCount = whitelistMintedCount + amount;
+
+		require(totalSupply + amount <= Public_Supply,"Token supply limit reached");
+
+	  require(whitelistMintOpen, "Whitelist minting closed");
+
+	  require(newWhitelistMintedCount <= WHITELIST_MAX_MINT_PER_WALLET,"Whitelist mint amount too large");
+
+	  require(msg.value == price * amount, "Token price mismatch");
+
+	  whitelistMintedCounts[msg.sender] = newWhitelistMintedCount;
+	  _mintHelper(msg.sender, amount, stake);
+ 	}
 
  	// Function to mint, can be called externally but cannot be called by a contract address => Credits to Critterz
-
 	function mint(uint256 amount, bool stake) external payable noContract{
 		uint256 newMintedAmount = publicMintedCounts[msg.sender] + amount;
 		require(totalSupply + amount <= Public_Supply, "Token Limit Reached"); //Ensure there is supply before minting
-		//require(newMintedAmount <= 1, "Public Mint Limit Reached");
 		publicMintedCounts[msg.sender] = newMintedAmount;
 		_mintHelper(msg.sender, amount, stake);
 	}
 
 
- 	// Function that actually does the mint. Need to call this if you want to mint => Credits to Critterz
-
+ 	// Function that actually does the mint. Need to call this if you want to mint
 	function _mintHelper(address account, uint256 amount, bool stake) internal nonReentrant {
 		//uint _id;
 		require(amount >0, "Amount too small");    		// amount of tokens you want to mint
@@ -136,6 +143,59 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 	}
 
 
+
+	/*
+   READ FUNCTIONS
+   */
+
+
+  	// Function to view baseURI
+  function _baseURI() internal view virtual override returns(string memory){
+  	return _baseTokenURI;
+  }
+
+	function _verify( bytes32[] memory proof, bytes32 root, address _address) internal pure returns (bool) {
+		return MerkleProof.verify(proof, root, keccak256(abi.encodePacked(_address)));
+	}
+
+	function _inWhitelist(bytes32[] memory proof) internal view returns (bool) {
+		return _verify(proof, whitelistMerkleRoot, msg.sender);
+	}
+
+  /*
+   OWNER FUNCTIONS
+   */
+
+  	//  Function to Open Public mint
+
+   function setPublicMintOpen(bool open) external onlyOwner {
+		 publicMintOpen = open;
+		 emit PublicMintOpen();
+   }
+
+  	//  Function to Set Staking Address/Change Staking address
+
+  function setStakingAddress(address _StakingAddress) public onlyOwner {
+    	StakingAddress = _StakingAddress;
+   	}
+
+  	// Function to set Base URI
+
+   	function setBaseURI(string memory baseTokenURI) external onlyOwner {
+    	_baseTokenURI = baseTokenURI;
+      URISet = true;
+     }
+
+
+		function setWhitelistMintOpen(bool open) external onlyOwner {
+	  	whitelistMintOpen = open;
+	    emit WhitelistMintOpen();
+	   }
+
+		function setWhitelistMerkleRoot(bytes32 _whitelistMerkleRoot) external onlyOwner {
+	    whitelistMerkleRoot = _whitelistMerkleRoot;
+	   }
+
  	/**
  	 * Modifier is used to check if account used to mint is not a contract.
    * Does this by checking the code size of the address, which has to be 0 for non-contracts.
@@ -151,47 +211,8 @@ contract BlockMint is ERC721Stakable, ReentrancyGuardUpgradeable {
 		_;
 	}
 
-
-
- /*
-  READ FUNCTIONS
-  */
-
-
- 	// Function to view baseURI
-
- 	function _baseURI() internal view virtual override returns(string memory){
- 		return _baseTokenURI;
- 	}
-
-
- /*
-  OWNER FUNCTIONS
-  */
-
- 	//  Function to Open Public mint
-
-  function setPublicMintOpen(bool open) external onlyOwner {
-    publicMintOpen = open;
-  	emit PublicMintOpen();
+	modifier onlyWhitelist(bytes32[] memory whitelistProof) {
+    require(_inWhitelist(whitelistProof), "Caller is not whitelisted");
+    _;
   }
-
- 	//  Function to Set Staking Address/Change Staking address
-
- 	function setStakingAddress(address _StakingAddress) public onlyOwner {
-   	StakingAddress = _StakingAddress;
-  }
-
- 	// Function to set Base URI
-
-  function setBaseURI(string memory baseTokenURI) external onlyOwner {
-    _baseTokenURI = baseTokenURI;
-    URISet = true;
-  }
-
-	function withdrawFunds() external virtual {
-		uint256 balance = address(this).balance;
-		jukabo.transfer(balance);
-	}
-
 }
