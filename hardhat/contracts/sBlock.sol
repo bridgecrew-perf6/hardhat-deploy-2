@@ -12,6 +12,10 @@ contract SBlock is ERC721Staked {
     _baseTokenURI = baseTokenURI;
   }
 
+  function _baseURI() internal view virtual override returns(string memory) {
+    return _baseTokenURI;
+  }
+
   function _setBaseURI(string memory baseTokenURI) external onlyOwner {
     _baseTokenURI = baseTokenURI;
   }
